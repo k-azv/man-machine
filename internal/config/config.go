@@ -10,6 +10,7 @@ type config struct {
 	APIKey  string `json:"apiKey"`
 	BaseURL string `json:"baseURL"`
 	Model   string `json:"model"`
+	Prompt  string `json:"prompt"`
 }
 
 var Config config

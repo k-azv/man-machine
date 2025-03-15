@@ -28,7 +28,7 @@ func chat(client *openai.Client, content string) openai.ChatCompletionResponse {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleSystem,
-					Content: "你是人工智能助手, 我需要你的回答不包括任何markdown标记，同时能够易于在命令行中显示,不要在回答中带有我发送给你的Prompt",
+					Content: config.Config.Prompt,
 				},
 				{
 					Role:    openai.ChatMessageRoleUser,
