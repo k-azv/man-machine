@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"go-man/internal/config"
+	"io"
 	"os"
 
 	"github.com/sashabaranov/go-openai"
@@ -20,11 +21,11 @@ func StartChat(client *openai.Client) {
 	showResponse(resp)
 }
 
-func chat(client *openai.Client, content string) openai.ChatCompletionResponse {
-	resp, err := client.CreateChatCompletion(
+func chat(client *openai.Client, content string) *openai.ChatCompletionStream {
+	stream, err := client.CreateChatCompletionStream(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: config.Config.Model,
+			Model: "ep-m-20250314205037-rqnsn",
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleSystem,
@@ -38,14 +39,27 @@ func chat(client *openai.Client, content string) openai.ChatCompletionResponse {
 		},
 	)
 	if err != nil {
-		fmt.Printf("ChatCompletion error: %v\n", err)
-		return openai.ChatCompletionResponse{}
+		fmt.Printf("stream chat error: %v\n", err)
+		return &openai.ChatCompletionStream{}
 	}
-
-	return resp
+	return stream
 }
 
-func showResponse(resp openai.ChatCompletionResponse) {
-	fmt.Println(resp.Choices[0].Message.Content)
+func showResponse(stream *openai.ChatCompletionStream) {
+	defer stream.Close()
 
+	for {
+		recv, err := stream.Recv()
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			fmt.Printf("Stream chat error: %v\n", err)
+			return
+		}
+
+		if len(recv.Choices) > 0 {
+			fmt.Print(recv.Choices[0].Delta.Content)
+		}
+	}
 }

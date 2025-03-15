@@ -41,6 +41,5 @@ func getExecutableDir() string {
 		os.Exit(1)
 	}
 
-	println(exePath)
 	return filepath.Dir(exePath)
 }
