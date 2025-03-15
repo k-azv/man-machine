@@ -6,10 +6,8 @@ import (
 	"go-man/internal/config"
 )
 
-const configFile = "configs/config.json"
-
 func main() {
-	config.LoadConfig(configFile)
+	config.LoadConfig()
 	client := client.LoadClient()
 	chat.StartChat(client)
 }
