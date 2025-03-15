@@ -1,8 +1,4 @@
-!*/
-!*.go
-!go.mod
-!go.sum
-
-
-*
 configs/config.json
+gman
+
+.vscode/

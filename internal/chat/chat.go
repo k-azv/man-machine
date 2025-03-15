@@ -7,18 +7,32 @@ import (
 	"io"
 	"os"
 
+	"github.com/chzyer/readline"
 	"github.com/sashabaranov/go-openai"
 )
 
 // StartChat send a message to the model and prints the response
-func StartChat(client *openai.Client) {
+func StartChat(client *openai.Client) (err error) {
+	var content string
+	// User can give message directly as argument or through stdin
 	if len(os.Args) < 2 {
-		fmt.Println("Please provide a message to chat with the model")
-		return
+		rl, err := readline.New("> ")
+		if err != nil {
+			return fmt.Errorf("failed to initialize readline: %w", err)
+		}
+		defer rl.Close()
+		
+		content, err = rl.Readline()
+		if err != nil {
+			return fmt.Errorf("failed to read input: %w", err)
+		}
+	} else {
+		content = os.Args[1]
 	}
-	content := os.Args[1]
 	resp := chat(client, content)
 	showResponse(resp)
+
+	return nil
 }
 
 func chat(client *openai.Client, content string) *openai.ChatCompletionStream {
