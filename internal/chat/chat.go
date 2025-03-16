@@ -11,61 +11,98 @@ import (
 	"github.com/sashabaranov/go-openai"
 )
 
-// StartChat send a message to the model and prints the response
+// StartChat determines the mode (single or interactive) and starts the chat.
 func StartChat(client *openai.Client) (err error) {
-	var content string
-	// User can give message directly as argument or through stdin
-	if len(os.Args) < 2 {
-		rl, err := readline.New("> ")
-		if err != nil {
-			return fmt.Errorf("failed to initialize readline: %w", err)
-		}
-		defer rl.Close()
-		
-		content, err = rl.Readline()
-		if err != nil {
-			return fmt.Errorf("failed to read input: %w", err)
-		}
-	} else {
-		content = os.Args[1]
+	if len(os.Args) > 1 {
+		return singleChat(client, os.Args[1])
 	}
-	resp := chat(client, content)
-	showResponse(resp)
+	return interactiveChat(client)
+}
 
+// singleChat handles a single message chat using command-line arguments.
+func singleChat(client *openai.Client, content string) error {
+	messages := []openai.ChatCompletionMessage{
+		{
+			Role:    openai.ChatMessageRoleSystem,
+			Content: config.Config.Prompt,
+		},
+		{
+			Role:    openai.ChatMessageRoleUser,
+			Content: content,
+		},
+	}
+
+	resp := createChatStream(client, messages)
+	if resp != nil {
+		displayResponse(resp, nil)
+	}
 	return nil
 }
 
-func chat(client *openai.Client, content string) *openai.ChatCompletionStream {
+// interactiveChat handles an interactive chat session with context.
+func interactiveChat(client *openai.Client) error {
+	messages := []openai.ChatCompletionMessage{
+		{
+			Role:    openai.ChatMessageRoleSystem,
+			Content: config.Config.Prompt,
+		},
+	}
+
+	rl, err := readline.New("> ")
+	if err != nil {
+		return fmt.Errorf("failed to initialize readline: %w", err)
+	}
+	defer rl.Close()
+
+	for {
+		content, err := rl.Readline()
+		if err != nil {
+			return fmt.Errorf("failed to read input: %w", err)
+		}
+		if content == "exit" {
+			break
+		}
+
+		messages = append(messages, openai.ChatCompletionMessage{
+			Role:    openai.ChatMessageRoleUser,
+			Content: content,
+		})
+
+		resp := createChatStream(client, messages)
+		if resp == nil {
+			continue
+		}
+
+		displayResponse(resp, &messages)
+	}
+	return nil
+}
+
+// createChatStream creates a chat completion stream with the given messages.
+func createChatStream(client *openai.Client, messages []openai.ChatCompletionMessage) *openai.ChatCompletionStream {
 	stream, err := client.CreateChatCompletionStream(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: "ep-m-20250314205037-rqnsn",
-			Messages: []openai.ChatCompletionMessage{
-				{
-					Role:    openai.ChatMessageRoleSystem,
-					Content: config.Config.Prompt,
-				},
-				{
-					Role:    openai.ChatMessageRoleUser,
-					Content: content,
-				},
-			},
+			Model:    config.Config.Model,
+			Messages: messages,
 		},
 	)
 	if err != nil {
 		fmt.Printf("stream chat error: %v\n", err)
-		return &openai.ChatCompletionStream{}
+		return nil
 	}
 	return stream
 }
 
-func showResponse(stream *openai.ChatCompletionStream) {
+// displayResponse processes and displays the response from the chat stream.
+func displayResponse(stream *openai.ChatCompletionStream, messages *[]openai.ChatCompletionMessage) {
 	defer stream.Close()
 
+	var responseContent string
 	for {
 		recv, err := stream.Recv()
 		if err == io.EOF {
-			return
+			break
 		}
 		if err != nil {
 			fmt.Printf("Stream chat error: %v\n", err)
@@ -73,7 +110,17 @@ func showResponse(stream *openai.ChatCompletionStream) {
 		}
 
 		if len(recv.Choices) > 0 {
-			fmt.Print(recv.Choices[0].Delta.Content)
+			content := recv.Choices[0].Delta.Content
+			fmt.Print(content)
+			responseContent += content
 		}
+	}
+	fmt.Println()
+
+	if messages != nil {
+		*messages = append(*messages, openai.ChatCompletionMessage{
+			Role:    openai.ChatMessageRoleAssistant,
+			Content: responseContent,
+		})
 	}
 }
