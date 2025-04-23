@@ -1,9 +1,9 @@
 # Man-Machine
 
-Man-Machine 是一个通过 LLM 来轻松阅读命令行程序文档的命令行程序
+Man-Machine is a command-line tool that uses LLM to help users read documentation for command-line programs easily.
 
 ## Features
-- 让 LLM 帮你读手册
+- Let an LLM read command manuals for you
 - ...
 
 ## Installation
