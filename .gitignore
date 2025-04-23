@@ -1,3 +1,9 @@
-configs/*
-gman
+# Folder
 .vscode/
+tmp/
+
+# Exclude executable
+mam
+
+# File
+.air.toml
