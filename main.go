@@ -31,9 +31,9 @@ func main() {
 
 		prompt.Initialize()
 		client := initClient()
-		helpText := fetchHelp(os.Args[1])
+		cmdDoc := fetchCmdDoc(os.Args[1:]...)
 
-		if err := chat(client, helpText); err != nil {
+		if err := chat(client, cmdDoc); err != nil {
 			log.Fatalf("Error: %v\n", err)
 		}
 	}

@@ -68,13 +68,18 @@ Options:`, "\n")
 	flag.PrintDefaults()
 }
 
-// fetchHelp retrieves help documentation for a given command.
-func fetchHelp(command string) string {
-	attempts := [][]string{
-		{"man", command},
-		{command, "--help"},
-		{command, "-h"},
-	}
+// fetchCmdDoc retrieves help documentation for a given command.
+func fetchCmdDoc(command ...string) string {
+	// Generate attempts to fetch help documentation(also suit for subcommands)
+	var attempts [][]string
+
+	man := []string{"man"}
+	man = append(man, command...)
+	attempts = append(attempts, man)
+
+	help := command
+	attempts = append(attempts, append(help, "--help"))
+	attempts = append(attempts, append(help, "-h"))
 
 	for _, args := range attempts {
 		out, err := exec.Command(args[0], args[1:]...).CombinedOutput()
@@ -87,7 +92,7 @@ func fetchHelp(command string) string {
 	fmt.Printf("No help documentation found for '%s' (no man page or --help output)\n"+
 		"The command will be sent directly to LLM.\n", command)
 
-	return command
+	return strings.Join(command, " ")
 }
 
 // normalize line endings to \n
