@@ -13,7 +13,7 @@ func main() {
 	var help bool
 	var iwant string
 	flag.BoolVarP(&help, "help", "h", false, "Display help information")
-	flag.StringVarP(&iwant, "iwant", "i", "", "Path to the config file")
+	flag.StringVarP(&iwant, "iwant", "i", "", "")
 	flag.Parse()
 
 	commands := flag.Args() // command exclude flag and argument
