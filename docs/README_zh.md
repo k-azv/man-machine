@@ -5,7 +5,9 @@
 Man-Machine 是一个通过 LLM 来轻松阅读命令行程序文档的命令行程序
 
 ## Features
+
 - 让 LLM 帮你读手册
+- 让 LLM 按你的需求生成命令
 
 ## Installation
 
@@ -40,14 +42,26 @@ language: <LANGUAGE_HERE>
 ## Usage
 
 基础用法
+
 ```shell
 mam mam # 获取 mam 的用法
 ```
 
+### Options
+
+#### `--iwant`, `-i`
+
+按你的需求生成对应命令
+
+```shell
+mam rm -i "删除 / 目录下的所有文件" 
+# or
+mam rm --iwant "删除 / 目录下的所有文件"
+```
+
 ## Roadmap
-- 添加 `-i`, `--iwant` 选项，阅读文档后按需求生成指令
-- 添加 `-l`, `--level` 选项，自定义输出内容的详细程度
-- 为 `mam <command>` 缓存功能
+
+- 为 `mam <command>` 添加缓存功能
 - 添加 `-o`，`--output` 选项，将输出重定向到文件
 
 ## License

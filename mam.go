@@ -74,7 +74,7 @@ Options:`, "\n")
 }
 
 // fetchCmdDoc retrieves help documentation for a given command.
-func fetchCmdDoc(command ...string) string {
+func fetchCmdDoc(command []string) string {
 	// Generate attempts to fetch help documentation(also suit for subcommands)
 	var attempts [][]string
 
