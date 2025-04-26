@@ -31,18 +31,22 @@ func runSetup() {
 	}
 
 	// Use default editor to open config.yaml
-	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "windows":
-		cmd = exec.Command("notepad", cfgFile)
-	case "darwin":
-		cmd = exec.Command("open", cfgFile)
-	case "linux":
-		cmd = exec.Command("xdg-open", cfgFile)
-	default:
-		log.Fatalf("We can't find editor for your OS\n" +
-			"or you can edit ~/.config/mam/config.yaml manually")
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		switch runtime.GOOS {
+		case "windows":
+			editor = "notepad"
+		case "darwin":
+			editor = "open"
+		case "linux":
+			editor = "xdg-open"
+		default:
+			log.Fatalf("We can't find editor for your OS\n" +
+				"or you can edit ~/.config/mam/config.yaml manually")
+		}
 	}
+
+	cmd := exec.Command(editor, cfgFile)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -90,7 +94,7 @@ func fetchCmdDoc(command ...string) string {
 	}
 
 	fmt.Printf("No help documentation found for '%s' (no man page or --help output)\n"+
-		"The command will be sent directly to LLM.\n", command)
+		"The command will be sent directly to LLM.\n\n", command)
 
 	return strings.Join(command, " ")
 }
