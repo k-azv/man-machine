@@ -14,24 +14,28 @@ func main() {
 	flag.BoolVarP(&help, "help", "h", false, "Display help information")
 	flag.Parse()
 
+	commands := flag.Args() // command exclude flag and argument
+
+	if len(commands) < 1 {
+		printUsage()
+		os.Exit(1)
+	}
+
 	switch {
 	case help:
 		printUsage()
-	case len(os.Args) > 1 && os.Args[1] == "setup":
+		os.Exit(0)
+	case commands[0] == "setup":
 		runSetup()
+		os.Exit(0)
 	default:
 		if err := config.LoadConfig(); err != nil {
 			log.Fatalf("Error loading config: %v", err)
 		}
 
-		if len(os.Args) < 2 {
-			printUsage()
-			os.Exit(1)
-		}
-
 		prompt.Initialize()
 		client := initClient()
-		cmdDoc := fetchCmdDoc(os.Args[1:]...)
+		cmdDoc := fetchCmdDoc(commands)
 
 		if err := chat(client, cmdDoc); err != nil {
 			log.Fatalf("Error: %v\n", err)
