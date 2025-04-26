@@ -11,17 +11,28 @@ import (
 
 func main() {
 	var help bool
+	var iwant string
 	flag.BoolVarP(&help, "help", "h", false, "Display help information")
+	flag.StringVarP(&iwant, "iwant", "i", "", "Path to the config file")
 	flag.Parse()
 
 	commands := flag.Args() // command exclude flag and argument
 
 	if len(commands) < 1 {
 		printUsage()
-		os.Exit(1)
+		os.Exit(0)
 	}
 
+	if err := config.LoadConfig(); err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
+
+	client := initClient()
+	cmdDoc := fetchCmdDoc(commands)
+
 	switch {
+	case iwant != "":
+		prompt.GenerateIwant(iwant)
 	case help:
 		printUsage()
 		os.Exit(0)
@@ -29,17 +40,11 @@ func main() {
 		runSetup()
 		os.Exit(0)
 	default:
-		if err := config.LoadConfig(); err != nil {
-			log.Fatalf("Error loading config: %v", err)
-		}
+		prompt.GenerateBasic()
+	}
 
-		prompt.Initialize()
-		client := initClient()
-		cmdDoc := fetchCmdDoc(commands)
-
-		if err := chat(client, cmdDoc); err != nil {
-			log.Fatalf("Error: %v\n", err)
-		}
+	if err := Chat(client, cmdDoc); err != nil {
+		log.Fatalf("Error: %v\n", err)
 	}
 
 }

@@ -17,19 +17,18 @@ func initClient() *openai.Client {
 	return c
 }
 
-// chat handles a single message chat using command-line arguments.
-func chat(client *openai.Client, content string) error {
+// Chat handles a single message chat using command-line arguments.
+func Chat(client *openai.Client, content string) error {
 	messages := []openai.ChatCompletionMessage{
 		{
 			Role:    openai.ChatMessageRoleSystem,
-			Content: prompt.Mam,
+			Content: prompt.Mam(),
 		},
 		{
 			Role:    openai.ChatMessageRoleUser,
 			Content: content,
 		},
 	}
-
 	resp, err := createChatStream(client, messages)
 	if err != nil {
 		return fmt.Errorf("create chat stream: %w", err)
