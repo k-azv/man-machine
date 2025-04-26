@@ -62,11 +62,12 @@ func runSetup() {
 
 func printUsage() {
 	fmt.Print(
-		`Usage: mam <command>
+		`Usage: mam [options] <command> [args]
 Use LLM to easily read command docs
 
 Commands:
-  setup -- Set up the configuration
+  <command> -- Run any shell command and send its output to the AI
+  setup     -- Set up the configuration
 
 Options:`, "\n")
 	flag.PrintDefaults()
