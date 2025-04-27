@@ -61,6 +61,7 @@ mam rm --iwant "Delete all files under the / dirctory"
 
 ## Roadmap
 
+- add `-q`, `--query` options， query the LLM about program documentation.
 - Add `-l`, `--level` options to customize the level of detail in the output.
 - Cache functionality for `mam <command>`
   Add `-o`, `--output` options, redirect output to a file.
