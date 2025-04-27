@@ -13,14 +13,15 @@ func main() {
 	var help bool
 	var iwant string
 	flag.BoolVarP(&help, "help", "h", false, "Display help information")
-	flag.StringVarP(&iwant, "iwant", "i", "", "")
+	flag.StringVarP(&iwant, "iwant", "i", "", "Specify your needs for LLM to generate commands")
 	flag.Parse()
 
 	commands := flag.Args() // command exclude flag and argument
 
-	if len(commands) < 1 {
+	if flag.NArg() == 0 && !help {
+		log.Printf("Error: no command provided\n\n")
 		printUsage()
-		os.Exit(0)
+		os.Exit(1)
 	}
 
 	if err := config.LoadConfig(); err != nil {
@@ -28,7 +29,6 @@ func main() {
 	}
 
 	client := initClient()
-	cmdDoc := fetchCmdDoc(commands)
 
 	switch {
 	case iwant != "":
@@ -43,6 +43,7 @@ func main() {
 		prompt.GenerateBasic()
 	}
 
+	cmdDoc := fetchCmdDoc(commands)
 	if err := Chat(client, cmdDoc); err != nil {
 		log.Fatalf("Error: %v\n", err)
 	}
