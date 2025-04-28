@@ -25,10 +25,9 @@ func LoadConfig() error {
 	}
 
 	if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
-		fmt.Printf("Config file not detected,\n " +
+		fmt.Printf("Config file not detected,\n" +
 			"run \"mam setup\" to initialize mam.\n")
-		os.Exit(1)
-		return nil
+		return fmt.Errorf("find config file: %w", err)
 	}
 
 	viper.SetConfigFile(cfgFile)

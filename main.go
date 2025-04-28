@@ -24,12 +24,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := config.LoadConfig(); err != nil {
-		log.Fatalf("Error loading config: %v", err)
-	}
-
-	client := initClient()
-
 	switch {
 	case iwant != "":
 		prompt.GenerateIwant(iwant)
@@ -42,6 +36,12 @@ func main() {
 	default:
 		prompt.GenerateBasic()
 	}
+
+	if err := config.LoadConfig(); err != nil {
+		log.Fatalf("Error: loading config: %v", err)
+	}
+
+	client := initClient()
 
 	cmdDoc := fetchCmdDoc(commands)
 	if err := Chat(client, cmdDoc); err != nil {
