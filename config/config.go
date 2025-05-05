@@ -42,10 +42,12 @@ func LoadConfig() error {
 }
 
 func GetConfigFilePath() (string, error) {
-	cfgRoot, err := os.UserConfigDir()
+	home, err := os.UserHomeDir()
 	if err != nil {
-		return "", fmt.Errorf("get config root: %w", err)
+		return "", fmt.Errorf("get home dir: %w", err)
 	}
+
+	cfgRoot := filepath.Join(home, ".config")
 
 	cfgDir := filepath.Join(cfgRoot, "mam")
 	if err := os.Mkdir(cfgDir, 0o755); err != nil && !os.IsExist(err) {

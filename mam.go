@@ -41,8 +41,8 @@ func runSetup() {
 		case "linux":
 			editor = "xdg-open"
 		default:
-			log.Fatalf("We can't find editor for your OS\n" +
-				"or you can edit ~/.config/mam/config.yaml manually")
+			log.Fatalf("We can't find editor for your OS\n"+
+				"or you can edit %s manually", cfgFile)
 		}
 	}
 
@@ -53,7 +53,7 @@ func runSetup() {
 
 	if err := cmd.Run(); err != nil {
 		log.Fatalf("Failed open editor: %v\n"+
-			"or you can edit ~/.config/mam/config.yaml manually", err)
+			"or you can edit %s manually", err, cfgFile)
 	}
 
 	fmt.Print("Setup complete!\n\n")
