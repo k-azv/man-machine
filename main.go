@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/k-azv/man-machine/config"
-	"github.com/k-azv/man-machine/prompt"
 	flag "github.com/spf13/pflag"
 )
 
@@ -20,7 +19,7 @@ func main() {
 
 	commands := flag.Args() // command exclude flag and argument
 
-	if help && !bare{
+	if help && !bare {
 		printUsage()
 		os.Exit(0)
 	}
@@ -31,23 +30,26 @@ func main() {
 		os.Exit(1)
 	}
 
-	if commands[0] == "setup" && !bare{
+	if commands[0] == "setup" && !bare {
 		runSetup()
 		os.Exit(0)
-	}	
+	}
 
-	if err := config.LoadConfig(); err != nil {
+	var cfg config.Config
+	var err error
+	if cfg, err = config.Load(); err != nil {
 		log.Fatalf("Error: loading config: %v", err)
 	}
 
-	client := initClient()
+	pg := NewPromptGenerator(cfg)
+	client := initClient(cfg)
 
 	// Generate prompt depend on flag
 	switch {
 	case iwant != "":
-		prompt.GenerateIwant(iwant)
+		pg.GenerateIwant(iwant)
 	default:
-		prompt.GenerateBasic()
+		pg.GenerateBasic()
 	}
 
 	var cmdDoc string
@@ -62,7 +64,7 @@ func main() {
 		cmdDoc = fetchCmdDoc(commands)
 	}
 
-	if err := Chat(client, cmdDoc); err != nil {
+	if err := Chat(client, cmdDoc, pg, cfg); err != nil {
 		log.Fatalf("Error: %v\n", err)
 	}
 

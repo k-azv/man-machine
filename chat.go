@@ -6,30 +6,30 @@ import (
 	"io"
 
 	"github.com/k-azv/man-machine/config"
-	"github.com/k-azv/man-machine/prompt"
 	"github.com/sashabaranov/go-openai"
 )
 
-func initClient() *openai.Client {
-	cfg := openai.DefaultConfig(config.Config.APIKey)
-	cfg.BaseURL = config.Config.BaseURL
-	c := openai.NewClientWithConfig(cfg)
-	return c
+// initClient initializes an go-openai client with the given config.Config.
+func initClient(cfg config.Config) *openai.Client {
+	clientConfig := openai.DefaultConfig(cfg.APIKey)
+	clientConfig.BaseURL = cfg.BaseURL
+	return openai.NewClientWithConfig(clientConfig)
+
 }
 
 // Chat handles a single message chat using command-line arguments.
-func Chat(client *openai.Client, content string) error {
+func Chat(client *openai.Client, content string, pg *PromptGenerator, cfg config.Config) error {
 	messages := []openai.ChatCompletionMessage{
 		{
 			Role:    openai.ChatMessageRoleSystem,
-			Content: prompt.Mam(),
+			Content: pg.Mam(),
 		},
 		{
 			Role:    openai.ChatMessageRoleUser,
 			Content: content,
 		},
 	}
-	resp, err := createChatStream(client, messages)
+	resp, err := createChatStream(client, cfg, messages)
 	if err != nil {
 		return fmt.Errorf("create chat stream: %w", err)
 	}
@@ -42,11 +42,11 @@ func Chat(client *openai.Client, content string) error {
 }
 
 // createChatStream creates a chat completion stream with given messages.
-func createChatStream(client *openai.Client, messages []openai.ChatCompletionMessage) (*openai.ChatCompletionStream, error) {
+func createChatStream(client *openai.Client, cfg config.Config, messages []openai.ChatCompletionMessage) (*openai.ChatCompletionStream, error) {
 	stream, err := client.CreateChatCompletionStream(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model:    config.Config.Model,
+			Model:    cfg.Model,
 			Messages: messages,
 		},
 	)

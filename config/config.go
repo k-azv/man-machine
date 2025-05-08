@@ -8,37 +8,38 @@ import (
 	"github.com/spf13/viper"
 )
 
-type config struct {
+// Config is the configuration for man-machine.
+type Config struct {
 	APIKey   string `mapstructure:"apiKey"`
 	BaseURL  string `mapstructure:"baseURL"`
 	Model    string `mapstructure:"model"`
 	Language string `mapstructure:"language"`
 }
 
-var Config config
-
-// loadConfig loads the config from the given json file
-func LoadConfig() error {
+// Load loads the config from the given json file
+func Load() (Config, error) {
 	cfgFile, err := GetConfigFilePath()
 	if err != nil {
-		return fmt.Errorf("get config file path: %w", err)
+		return Config{}, fmt.Errorf("get config file path: %w", err)
 	}
 
 	if _, err := os.Stat(cfgFile); os.IsNotExist(err) {
 		fmt.Printf("Config file not detected,\n" +
 			"run \"mam setup\" to initialize mam.\n")
-		return fmt.Errorf("find config file: %w", err)
+		return Config{}, fmt.Errorf("find config file: %w", err)
 	}
 
-	viper.SetConfigFile(cfgFile)
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("reading config file: %w", err)
+	v := viper.New()
+	v.SetConfigFile(cfgFile)
+	if err := v.ReadInConfig(); err != nil {
+		return Config{}, fmt.Errorf("reading config file: %w", err)
 	}
 
-	if err := viper.Unmarshal(&Config); err != nil {
-		return fmt.Errorf("decode into struct: %w", err)
+	var c Config
+	if err := v.Unmarshal(&c); err != nil {
+		return Config{}, fmt.Errorf("decode into struct: %w", err)
 	}
-	return nil
+	return c, nil
 }
 
 func GetConfigFilePath() (string, error) {
