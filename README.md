@@ -59,6 +59,28 @@ mam rm -i "Delete all files under the / dirctory"
 mam rm --iwant "Delete all files under the / dirctory"
 ```
 
+#### `--bare`, `-b`
+
+Execute the provided command literally to fetch help documentation, bypassing mam's internal attempts.
+
+In the following example, the output of `go help build` is directly provided to the LLM.
+
+```shell
+mam -b go help build
+# or
+mam --bare go help build
+```
+
+#### `--help`, `-h`
+
+Get help document for mam.
+
+```shell
+mam --help
+# or
+mam -h
+```
+
 ## Roadmap
 
 - add `-q`, `--query` options， query the LLM about program documentation.

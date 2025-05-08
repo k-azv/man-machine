@@ -59,6 +59,28 @@ mam rm -i "删除 / 目录下的所有文件"
 mam rm --iwant "删除 / 目录下的所有文件"
 ```
 
+#### `--bare`, `-b`
+
+直接执行提供的命令以获取帮助文档，而不是通过 mam 内部的逻辑获取
+
+下面的示例中会直接将 `go help build` 的输出提供给 LLM
+
+```shell
+mam -b go help build
+# or
+mam --bare go help build
+```
+
+#### `--help`, `-h`
+
+获取帮助文档
+
+```shell
+mam --help
+# or
+mam -h
+```
+
 ## Roadmap
 
 - 添加 `-q`, `--query` 选项， 针对程序文档向 LLM 进行询问

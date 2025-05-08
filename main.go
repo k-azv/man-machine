@@ -10,32 +10,31 @@ import (
 )
 
 func main() {
-	var help bool
+	var help, bare bool
 	var iwant string
 	flag.BoolVarP(&help, "help", "h", false, "Display help information")
 	flag.StringVarP(&iwant, "iwant", "i", "", "Specify your needs for LLM to generate commands")
+	flag.BoolVarP(&bare, "bare", "b", false, "Execute the provided command literally to fetch help documentation,\nbypassing mam's internal attempts")
+
 	flag.Parse()
 
 	commands := flag.Args() // command exclude flag and argument
 
-	if flag.NArg() == 0 && !help {
+	if help && !bare{
+		printUsage()
+		os.Exit(0)
+	}
+
+	if flag.NArg() == 0 {
 		log.Printf("Error: no command provided\n\n")
 		printUsage()
 		os.Exit(1)
 	}
 
-	switch {
-	case iwant != "":
-		prompt.GenerateIwant(iwant)
-	case help:
-		printUsage()
-		os.Exit(0)
-	case commands[0] == "setup":
+	if commands[0] == "setup" && !bare{
 		runSetup()
 		os.Exit(0)
-	default:
-		prompt.GenerateBasic()
-	}
+	}	
 
 	if err := config.LoadConfig(); err != nil {
 		log.Fatalf("Error: loading config: %v", err)
@@ -43,7 +42,26 @@ func main() {
 
 	client := initClient()
 
-	cmdDoc := fetchCmdDoc(commands)
+	// Generate prompt depend on flag
+	switch {
+	case iwant != "":
+		prompt.GenerateIwant(iwant)
+	default:
+		prompt.GenerateBasic()
+	}
+
+	var cmdDoc string
+	// Generate document depend on flag
+	if bare {
+		var err error
+		cmdDoc, err = bareFetchDoc(commands)
+		if err != nil {
+			log.Fatalf("Error: %v\n", err)
+		}
+	} else {
+		cmdDoc = fetchCmdDoc(commands)
+	}
+
 	if err := Chat(client, cmdDoc); err != nil {
 		log.Fatalf("Error: %v\n", err)
 	}

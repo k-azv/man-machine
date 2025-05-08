@@ -100,6 +100,23 @@ func fetchCmdDoc(command []string) string {
 	return strings.Join(command, " ")
 }
 
+// bareFetchDoc executes the given command and returns its output.
+func bareFetchDoc(commands []string) (string, error) {
+	out, err := exec.Command(commands[0], commands[1:]...).CombinedOutput()
+	text := normalize(string(out))
+	if err != nil {
+		// When command exit with non-zero status, print its output
+		if ee, ok := err.(*exec.ExitError); ok {
+			fmt.Printf("Excute \"%s\":\n%s\n", strings.Join(commands, " "), text)
+			return "", ee
+		} else {
+			return "", fmt.Errorf("excute command '%s': %v", commands, err)
+		}
+	}
+
+	return text, nil
+}
+
 // normalize line endings to \n
 func normalize(s string) string {
 	return strings.TrimSpace(strings.ReplaceAll(s, "\r\n", "\n"))
