@@ -82,9 +82,10 @@ func fetchCmdDoc(command []string) string {
 	man = append(man, command...)
 	attempts = append(attempts, man)
 
-	help := command
+	help := append([]string{}, command...)
 	attempts = append(attempts, append(help, "--help"))
 	attempts = append(attempts, append(help, "-h"))
+	attempts = append(attempts, append(help, "help"))
 
 	for _, args := range attempts {
 		out, err := exec.Command(args[0], args[1:]...).CombinedOutput()
