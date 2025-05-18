@@ -16,10 +16,10 @@ Download the prebuilt binary from the [Releases page](https://github.com/k-azv/m
 ## Initialization
 
 ```shell
-mam setup # Create and open the configuration file(~/.config/mam/config.yaml)
+mam setup # Create and open the configuration file (~/.config/mam/config.yaml)
 ```
 
-Complete the setup in `config.yaml`. Currently only services compatible with the OpenAI API protocol are supported.
+Complete the setup in `config.yaml`. Currently, only services compatible with the OpenAI API protocol are supported.
 
 ```yaml
 # config.yaml template
@@ -54,9 +54,9 @@ mam mam # Get the usage of mam
 Generate commands according to your needs.
 
 ```shell
-mam rm -i "Delete all files under the / dirctory"
+mam rm -i "Delete all files under the / directory"
 # or
-mam rm --iwant "Delete all files under the / dirctory"
+mam rm --iwant "Delete all files under the / directory"
 ```
 
 #### `--bare`, `-b`
@@ -73,7 +73,7 @@ mam --bare go help build
 
 #### `--help`, `-h`
 
-Get help document for mam.
+Display help information.
 
 ```shell
 mam --help
@@ -83,10 +83,10 @@ mam -h
 
 ## Roadmap
 
-- add `-q`, `--query` options， query the LLM about program documentation.
-- Add `-l`, `--level` options to customize the level of detail in the output.
-- Cache functionality for `mam <command>`
-  Add `-o`, `--output` options, redirect output to a file.
+- Add `-q`, `--query` options to query the LLM about program documentation.
+- Add cache functionality for `mam <command>`.
+- Add `-o`, `--output` options to redirect output to a file.
+- Add `-c`, `--conversation` option for continuous conversation mode.
 
 ## License
 

@@ -2,7 +2,7 @@
 
 [English](../README.md)
 
-Man-Machine 是一个通过 LLM 来轻松阅读命令行程序文档的命令行程序
+Man-Machine 是一个通过 LLM 来轻松阅读命令行程序文档的命令行工具
 
 ## Features
 
@@ -83,9 +83,10 @@ mam -h
 
 ## Roadmap
 
-- 添加 `-q`, `--query` 选项， 针对程序文档向 LLM 进行询问
+- 添加 `-q`, `--query` 选项，用于查询程序文档
 - 为 `mam <command>` 添加缓存功能
-- 添加 `-o`，`--output` 选项，将输出重定向到文件
+- 添加 `-o`, `--output` 选项，用于重定向输出到文件
+- 添加 `-c`, `--conversation` 选项，支持连续对话模式
 
 ## License
 
