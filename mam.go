@@ -107,9 +107,9 @@ func bareFetchDoc(commands []string) (string, error) {
 	text := normalize(string(out))
 	if err != nil {
 		// When command exit with non-zero status, print its output
-		if ee, ok := err.(*exec.ExitError); ok {
+		if _, ok := err.(*exec.ExitError); ok {
 			fmt.Printf("Excute \"%s\":\n%s\n", strings.Join(commands, " "), text)
-			return "", ee
+			return "", fmt.Errorf("excute command '%s': %v", commands, err)
 		} else {
 			return "", fmt.Errorf("excute command '%s': %v", commands, err)
 		}
