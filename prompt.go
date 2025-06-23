@@ -49,3 +49,18 @@ func (p *PromptGenerator) GenerateIwant(argument string) {
 		language + format
 	p.Prompts = append(p.Prompts, Iwant)
 }
+
+// UpdatePromptForContinuousChat updates the prompts for continuous chat
+func (p *PromptGenerator) UpdatePromptForContinuousChat() {
+	p.clearPrompt()
+
+	language := p.Language
+	PromptForContinuousChat := role + "针对文档中的内容并**参考此前的对话**,回答用户的问题,使用**" +
+		language + "**回答 " + format
+	p.Prompts = append(p.Prompts, PromptForContinuousChat)
+}
+
+// clearPrompt clears the prompts
+func (p *PromptGenerator) clearPrompt() {
+	p.Prompts = []string{}
+}

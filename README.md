@@ -71,6 +71,16 @@ mam -b go help build
 mam --bare go help build
 ```
 
+#### `--chat`, `-c`
+
+Enter continuous conversation mode for multi-turn chat.
+
+```shell
+mam --chat
+# or
+mam -c
+```
+
 #### `--help`, `-h`
 
 Display help information.
@@ -86,7 +96,6 @@ mam -h
 - Add `-q`, `--query` options to query the LLM about program documentation.
 - Add cache functionality for `mam <command>`.
 - Add `-o`, `--output` options to redirect output to a file.
-- Add `-c`, `--conversation` option for continuous conversation mode.
 
 ## License
 

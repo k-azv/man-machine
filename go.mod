@@ -3,6 +3,7 @@ module github.com/k-azv/man-machine
 go 1.24.1
 
 require (
+	github.com/peterh/liner v1.2.2
 	github.com/sashabaranov/go-openai v1.38.0
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.20.1
@@ -11,6 +12,7 @@ require (
 require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
+	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/sagikazarmark/locafero v0.7.0 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect

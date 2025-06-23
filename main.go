@@ -9,11 +9,12 @@ import (
 )
 
 func main() {
-	var help, bare bool
+	var help, bare, chat bool
 	var iwant string
 	flag.BoolVarP(&help, "help", "h", false, "Display help information")
 	flag.StringVarP(&iwant, "iwant", "i", "", "Specify your needs for LLM to generate commands")
 	flag.BoolVarP(&bare, "bare", "b", false, "Execute the provided command literally to fetch help documentation,\nbypassing mam's internal attempts")
+	flag.BoolVarP(&chat, "chat", "c", false, "Enable continuous conversation mode")
 
 	flag.Parse()
 
@@ -64,8 +65,14 @@ func main() {
 		cmdDoc = fetchCmdDoc(commands)
 	}
 
-	if err := Chat(client, cmdDoc, pg, cfg); err != nil {
-		log.Fatalf("Error: %v\n", err)
+	if chat {
+		if err := ContinuousChat(client, cmdDoc, pg, cfg); err != nil {
+			log.Fatalf("Error: %v\n", err)
+		}
+	} else {
+		if err := Chat(client, cmdDoc, pg, cfg); err != nil {
+			log.Fatalf("Error: %v\n", err)
+		}
 	}
 
 }
